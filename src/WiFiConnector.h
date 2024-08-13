@@ -94,6 +94,11 @@ class WiFiConnectorClass {
         return WiFi.status() == WL_CONNECTED;
     }
 
+    // в процессе подключения
+    bool connecting() {
+        return _tryConnect;
+    }
+
    private:
     String _APname, _APpass;
     uint32_t _tmr = 0, _tout;
