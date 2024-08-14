@@ -45,9 +45,9 @@ class WiFiConnectorClass {
         _conn_cb = cb;
     }
 
-    // подключить обработчик таймаута подключения
-    void onTimeout(ConnectorCallback cb) {
-        _tout_cb = cb;
+    // подключить обработчик ошибки подключения, вызовется после старта AP
+    void onError(ConnectorCallback cb) {
+        _err_cb = cb;
     }
 
     // подключиться. Вернёт false если ssid не задан, будет запущена AP
@@ -59,11 +59,13 @@ class WiFiConnectorClass {
             WiFi.begin(ssid, pass);
             _tmr = millis();
             return 1;
+            
         } else {
             _tryConnect = false;
             WiFi.disconnect();
             WiFi.mode(WIFI_AP);
             WiFi.softAP(_APname, _APpass);
+            if (_err_cb) _err_cb();
         }
         return 0;
     }
@@ -79,10 +81,10 @@ class WiFiConnectorClass {
 
             } else if (millis() - _tmr >= _tout) {
                 _tryConnect = false;
-                if (_tout_cb) _tout_cb();
                 WiFi.disconnect();
                 WiFi.mode(WIFI_AP);
                 WiFi.softAP(_APname, _APpass);
+                if (_err_cb) _err_cb();
                 return 1;
             }
         }
@@ -99,6 +101,11 @@ class WiFiConnectorClass {
         return _tryConnect;
     }
 
+    // подключить обработчик таймаута подключения
+    void onTimeout(ConnectorCallback cb) __attribute__((deprecated)) {
+        _err_cb = cb;
+    }
+
    private:
     String _APname, _APpass;
     uint32_t _tmr = 0, _tout;
@@ -106,7 +113,7 @@ class WiFiConnectorClass {
     bool _tryConnect = false;
 
     ConnectorCallback _conn_cb = nullptr;
-    ConnectorCallback _tout_cb = nullptr;
+    ConnectorCallback _err_cb = nullptr;
 };
 
 extern WiFiConnectorClass WiFiConnector;

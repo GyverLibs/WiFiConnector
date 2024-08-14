@@ -46,8 +46,8 @@ void closeAP(bool close);
 // подключить обработчик успешного подключения
 void onConnect(ConnectorCallback cb);
 
-// подключить обработчик таймаута подключения
-void onTimeout(ConnectorCallback cb);
+// подключить обработчик ошибки подключения, вызовется после старта AP
+void onError(ConnectorCallback cb);
 
 // подключиться. Вернёт false если ssid не задан, будет запущена AP
 bool connect(const String& ssid, const String& pass = emptyString);
@@ -71,11 +71,12 @@ void setup() {
     WiFiConnector.connect("SSID", "PASS");
 
     WiFiConnector.onConnect([]() {
-        Serial.print("Local IP: ");
+        Serial.print("Connected. Local IP: ");
         Serial.println(WiFi.localIP());
     });
-    WiFiConnector.onTimeout([]() {
-        Serial.println("WiFi error");
+    WiFiConnector.onError([]() {
+        Serial.print("WiFi error. AP IP: ");
+        Serial.println(WiFi.softAPIP());
     });
 }
 
