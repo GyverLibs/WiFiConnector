@@ -76,7 +76,7 @@ class WiFiConnectorClass {
             if (WiFi.status() == WL_CONNECTED) {
                 _tryConnect = false;
                 if (_conn_cb) _conn_cb();
-                if (_closeAP) WiFi.softAPdisconnect();
+                if (_closeAP) WiFi.softAPdisconnect(true);
                 return 1;
 
             } else if (millis() - _tmr >= _tout) {
