@@ -55,16 +55,16 @@ class WiFiConnectorClass {
         if (ssid.length()) {
             _tryConnect = true;
             WiFi.mode(WIFI_AP_STA);
-            WiFi.softAP(_APname, _APpass);
-            WiFi.begin(ssid, pass);
+            _startAP();
+            WiFi.begin(ssid.c_str(), pass.c_str());
             _tmr = millis();
             return 1;
-            
+
         } else {
             _tryConnect = false;
             WiFi.disconnect();
             WiFi.mode(WIFI_AP);
-            WiFi.softAP(_APname, _APpass);
+            _startAP();
             if (_err_cb) _err_cb();
         }
         return 0;
@@ -83,7 +83,7 @@ class WiFiConnectorClass {
                 _tryConnect = false;
                 WiFi.disconnect();
                 WiFi.mode(WIFI_AP);
-                WiFi.softAP(_APname, _APpass);
+                _startAP();
                 if (_err_cb) _err_cb();
                 return 1;
             }
@@ -114,6 +114,10 @@ class WiFiConnectorClass {
 
     ConnectorCallback _conn_cb = nullptr;
     ConnectorCallback _err_cb = nullptr;
+
+    void _startAP() {
+        WiFi.softAP(_APname.c_str(), _APpass.c_str());
+    }
 };
 
 extern WiFiConnectorClass WiFiConnector;

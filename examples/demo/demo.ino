@@ -8,7 +8,8 @@ void setup() {
         Serial.print("Local IP: ");
         Serial.println(WiFi.localIP());
     });
-    WiFiConnector.onTimeout([]() {
+
+    WiFiConnector.onError([]() {
         Serial.println("WiFi error");
     });
 }
