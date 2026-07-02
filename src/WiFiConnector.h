@@ -54,6 +54,7 @@ class WiFiConnectorClass {
     bool connect(const String& ssid, const String& pass = emptyString) {
         if (ssid.length()) {
             _tryConnect = true;
+            WiFi.disconnect();
             WiFi.mode(WIFI_AP_STA);
             _startAP();
             WiFi.begin(ssid.c_str(), pass.c_str());
